@@ -1,0 +1,176 @@
+Copy
+---
+Dim iRow
+
+Sub CopyFiles()
+    Call CopyMyFiles(Range("C7"), Range("C8"))
+End Sub
+
+Sub CopyMyFiles(mySourcePath, myDestinationPath)
+    iCol = 3
+    iRow = 11
+    For i = iRow To 1000
+        Filename = Cells(i, iCol).Value
+        If (Filename <> "") Then
+            FileFrom = mySourcePath & "\" & Filename
+            FileTo = myDestinationPath & "\" & Filename
+            FileCopy FileFrom, FileTo
+        End If
+    Next i
+   
+End Sub
+
+
+
+Sub test()
+    FileCopy "D:\Ipod-Nhac\Vox Angeli\Comme Toi - Vox Angeli.mp3", "D:\Ipod-Nhac\Comme Toi - Vox Angeli.mp3"
+End Sub
+
+
+
+File
+---
+Dim iRow
+
+Sub ListFiles()
+    iRow = 11
+    Call ListMyFiles(Range("C7"), Range("C8"))
+End Sub
+
+Sub ListMyFiles(mySourcePath, IncludeSubfolders)
+    Set MyObject = New Scripting.FileSystemObject
+    Set mySource = MyObject.GetFolder(mySourcePath)
+    On Error Resume Next
+    For Each MyFile In mySource.Files
+        iCol = 2
+        Cells(iRow, iCol).Value = MyFile.path
+        iCol = iCol + 1
+        Cells(iRow, iCol).Value = MyFile.Name
+        iCol = iCol + 1
+        Cells(iRow, iCol).Value = MyFile.Size / 1000000
+        
+        'iCol = iCol + 1
+        'Cells(iRow, iCol).Value = myFile.DateLastModified
+        iRow = iRow + 1
+    Next
+    If IncludeSubfolders Then
+        For Each mySubFolder In mySource.SubFolders
+            Call ListMyFiles(mySubFolder.path, True)
+        Next
+    End If
+End Sub
+
+
+'Sub deleteFile()
+'    Dim filename As String
+'    filename = Range("A2").Value
+'    Kill filename
+'End Sub
+
+
+Sub changeNameFile()
+    Dim path As Variant
+    Dim iRow As Integer, iCol As Integer
+    iRow = 11
+    iCol = 3
+    Dim OldFile As String
+    Dim NewFile As String
+    
+    
+        path = Range("C7").Value & "\"
+        For i = 1 To Range("C1").Value
+            OldFile = path & ActiveSheet.Cells(iRow - 1 + i, iCol)
+            NewFile = path & ActiveSheet.Cells(iRow - 1 + i, iCol + 3)
+            Name OldFile As NewFile
+        Next
+   
+    
+    
+End Sub
+
+
+
+Sub Clear()
+    Range("B11:C5000").Clear
+    Range("F11:F5000").Clear
+End Sub
+
+
+
+Folder
+----
+Dim iRow
+
+Sub createFolder()
+    Dim i As Integer
+    Dim n As Integer
+    Dim path As String
+    Dim fldrpath As String, newfldrpath As String
+    Dim fso As Object
+    Set fso = CreateObject("scripting.filesystemobject")
+    
+    path = Range("path_folder").Value
+    n = Range("nb_folder").Value
+    For i = 0 To n - 1
+        fldrpath = path & "\" & Range("begin_listFolder").Offset(i + 1, 0).Value
+        If Not fso.FolderExists(fldrpath) Then
+            fso.createFolder (fldrpath)
+        End If
+  
+    Next i
+End Sub
+
+
+Sub changeNameFolder()
+    Dim path As Variant
+    Dim iRow As Integer, iCol As Integer
+    iRow = 11
+    iCol = 3
+    Dim OldFile As String
+    Dim NewFile As String
+    
+    path = Range("C7").Value & "\"
+    Dim fso As Object
+    Set fso = CreateObject("scripting.filesystemobject")
+    
+    For i = 1 To Range("C1").Value
+        OldFile = path & ActiveSheet.Cells(iRow - 1 + i, iCol)
+        NewFile = path & ActiveSheet.Cells(iRow - 1 + i, iCol + 3)
+        Name OldFile As NewFile
+    Next
+End Sub
+
+
+Sub ListFolders()
+    iRow = 11
+    Call ListMyFolder(Range("C7"), Range("C8"))
+End Sub
+
+Sub ListMyFolder(mySourcePath, IncludeSubfolders)
+    Dim fldrpath As String, newfldrpath As String
+    Set MyObject = New Scripting.FileSystemObject
+    Set mySource = MyObject.GetFolder(mySourcePath)
+    
+    Dim fso As Object
+    Set fso = CreateObject("scripting.filesystemobject")
+    On Error Resume Next
+
+    For Each mySubFolder In mySource.SubFolders
+        iCol = 2
+        Cells(iRow, iCol).Value = mySubFolder.path
+        iCol = iCol + 1
+        Cells(iRow, iCol).Value = mySubFolder.Name
+        iCol = iCol + 1
+        iRow = iRow + 1
+    Next
+    If IncludeSubfolders Then
+        For Each mySubFolder In mySource.SubFolders
+            Call ListMyFolder(mySubFolder.path, True)
+        Next
+    End If
+End Sub
+
+
+
+
+
